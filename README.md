@@ -1,7 +1,9 @@
 # NoteTaker
 
 ## Tech Used:
-Python, Django
+BackEnd  : Python (Django Framework) <br>
+FrontEnd : JavaScript (React - Vite) <br>
+DataBase : SQLite3
 
 ## Purpose:
 As a student in university I found it incredibly difficult to create my notes while having my laptop on my table so I decided it would be best if I could create a applciation that can host my own notes and can be shared with anyone curious to see it.
