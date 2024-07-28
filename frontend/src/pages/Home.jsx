@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import api from '../api'
+import Notes from '../components/Notes'
+import '../styles/Home.scss'
 
 const Home = () => {
   //all notes
@@ -35,6 +37,7 @@ const Home = () => {
     <div>
       <div>
         <h2>Notes</h2>
+        {notes.map((note)=><Notes note={note} onDelete={deleteNote} key={note.id}></Notes>)}
       </div>
       <h2>Create a Note</h2>
       <form onSubmit={createNote}>
