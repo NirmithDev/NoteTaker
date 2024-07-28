@@ -10,6 +10,9 @@ As a student in university I found it incredibly difficult to create my notes wh
 
 I am also building this for a friend to help him since he is struggling with carple tunnel syndrome and I really want to get AI formatting and Latex formatting incorporated and hosted on Docker so baby steps!
 
+## Setup Instruction
+- Please refer the setup instruction.md file
+
 ## Features Implemented:
 V1:
 - Authentication
