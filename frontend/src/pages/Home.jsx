@@ -33,11 +33,12 @@ const Home = () => {
       getNotes()
     }).catch((error)=>alert(error))
   }
+  const disabled = false;
   return (
     <div>
       <div>
         <h2>Notes</h2>
-        {notes.map((note)=><Notes note={note} onDelete={deleteNote} key={note.id}></Notes>)}
+        {notes.map((note)=><Notes note={note} onDelete={deleteNote} onDisabled={disabled} key={note.id}></Notes>)}
       </div>
       <h2>Create a Note</h2>
       <form onSubmit={createNote}>

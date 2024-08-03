@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api'; // Import the api instance
-//import './ProfilePage.css'; // Import the CSS file
+import '../styles/Profile.scss'; // Import the CSS file
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { TextField, InputAdornment } from '@mui/material';
+import Notes from '../components/Notes'; // Import the Notes component
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -12,6 +17,8 @@ const Profile = () => {
     location: '',
     birth_date: '',
   });
+  const [notes, setNotes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch user data
   useEffect(() => {
@@ -28,6 +35,17 @@ const Profile = () => {
       })
       .catch(error => console.error('Error fetching profile:', error));
   }, []);
+
+  // Fetch notes
+  useEffect(() => {
+    getNotes();
+  }, []);
+
+  const getNotes = () => {
+    api.get('api/notes/')
+      .then(response => setNotes(response.data))
+      .catch(error => alert(error));
+  };
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -49,44 +67,58 @@ const Profile = () => {
       .catch(error => console.error('Error updating profile:', error));
   };
 
+  // Delete note
+  const deleteNote = (id) => {
+    api.delete(`/api/notes/${id}/`)
+      .then(() => {
+        setNotes(notes.filter(note => note.id !== id));
+      })
+      .catch(error => alert(error));
+  };
+
+  const showDeleteButton = true; // Update this value as needed
+
+  // Filter notes based on search query
+  const filteredNotes = notes.filter(note =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (!user) return <p>Loading...</p>;
 
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <img src="/default-person-icon.png" alt="Profile Icon" className="profile-icon" />
+        <AccountCircleIcon style={{ fontSize: 100 }} className="profile-icon" />
         <h1>{user.username}</h1>
       </div>
       <div className="profile-details">
         {editMode ? (
           <form onSubmit={handleSubmit}>
-            <label>
-              Bio:
-              <input
-                type="text"
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Location:
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-              />
-            </label>
-            <label>
-              Birth Date:
-              <input
-                type="date"
-                name="birth_date"
-                value={formData.birth_date}
-                onChange={handleChange}
-              />
-            </label>
+            <label htmlFor="bio">Bio:</label>
+            <input
+              type="text"
+              name="bio"
+              id="bio"
+              value={formData.bio}
+              onChange={handleChange}
+            />
+            <label htmlFor="location">Location:</label>
+            <input
+              type="text"
+              name="location"
+              id="location"
+              value={formData.location}
+              onChange={handleChange}
+            />
+            <label htmlFor="birth_date">Birth Date:</label>
+            <input
+              type="date"
+              name="birth_date"
+              id="birth_date"
+              value={formData.birth_date}
+              onChange={handleChange}
+            />
             <button type="submit">Save</button>
             <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
           </form>
@@ -99,9 +131,32 @@ const Profile = () => {
           </div>
         )}
       </div>
+      <div className="notes-section">
+        <div className="search-container">
+          <TextField
+            variant="outlined"
+            placeholder="Search notes"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                  <FilterListIcon style={{ marginLeft: 8 }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
+        <div>
+          <h2>Notes</h2>
+          {filteredNotes.map(note => (
+            <Notes note={note} onDelete={deleteNote} onDisabled={showDeleteButton} key={note.id} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Profile;
-

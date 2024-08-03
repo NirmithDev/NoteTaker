@@ -1,0 +1,91 @@
+/* ProfilePage.css */
+
+.profile-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.profile-header {
+display: flex;
+align-items: center;
+border-bottom: 1px solid #ddd;
+padding-bottom: 20px;
+}
+
+.profile-icon {
+width: 50px;
+height: 50px;
+border-radius: 50%;
+margin-right: 20px;
+}
+
+.profile-details {
+margin-top: 20px;
+}
+
+.profile-details label {
+display: block;
+margin-bottom: 10px;
+}
+
+.profile-details input[type="text"],
+.profile-details input[type="date"] {
+width: 100%;
+padding: 8px;
+margin-top: 5px;
+border: 1px solid #ddd;
+border-radius: 4px;
+}
+
+.profile-details button {
+margin-right: 10px;
+}
+
+.profile-container {
+    padding: 20px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-icon {
+    margin-right: 20px;
+  }
+  
+  .profile-details {
+    margin-bottom: 20px;
+  }
+  
+  .notes-section {
+    margin-top: 20px;
+  }
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .MuiTextField-root {
+    width: 100%;
+  }
+  
+  .MuiOutlinedInput-root {
+    padding-right: 40px; // Adjust based on your layout needs
+  }
+  
+  .MuiInputAdornment-root {
+    margin-right: 8px;
+  }
+  
+  .delete-button {
+    color: red;
+    margin-top: 10px;
+  }
+  
