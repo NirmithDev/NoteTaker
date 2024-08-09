@@ -1,11 +1,17 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, Profile
+from .models import Note, Profile, Courses
+
+class CoursesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Courses
+        fields = ['id', 'title']
 
 class ProfileSerializer(serializers.ModelSerializer):
+    contributed_course=CoursesSerializer(many=True, read_only=True)
     class Meta:
         model = Profile
-        fields = ['bio', 'location', 'birth_date']
+        fields = ['bio', 'location', 'birth_date', 'contributed_courses']
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
@@ -49,6 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 class NoteSerializer(serializers.ModelSerializer):
+    course=CoursesSerializer(read_only=True)
     class Meta:
         model = Note
         fields = ["id", "title", "content", "created_at", "author"]

@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, NoteSerializer
+from .serializers import UserSerializer, NoteSerializer, CoursesSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note
+from .models import Note, Profile, Courses
 from rest_framework.response import Response
+
 # Create your views here.
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -25,7 +26,9 @@ class NoteListCreate(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid():
             #read only author so we add it here manually
-            serializer.save(author=self.request.user)
+            note=serializer.save(author=self.request.user)
+            profile, created = Profile.objects.get_or_create(user=self.request.user)
+            profile.contributed_courses.add(note.course)
         else:
             print(serializer.errors)
 
@@ -51,3 +54,15 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+
+# View for listing and creating courses
+class CoursesListCreateView(generics.ListCreateAPIView):
+    queryset = Courses.objects.all()
+    serializer_class = CoursesSerializer
+    permission_classes = [IsAuthenticated]
+
+# View for retrieving, updating, or deleting a specific course
+class CoursesDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Courses.objects.all()
+    serializer_class = CoursesSerializer
+    permission_classes = [IsAuthenticated]
