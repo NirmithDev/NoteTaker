@@ -58,5 +58,5 @@ class NoteSerializer(serializers.ModelSerializer):
     course=CoursesSerializer(read_only=True)
     class Meta:
         model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
+        fields = ["id", "title", "content", "created_at", "author", "course"]
         extra_kwargs = {"author": {"read_only": True}}

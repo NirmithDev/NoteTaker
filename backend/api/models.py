@@ -16,6 +16,7 @@ class Note(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes")
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, related_name="course_notes")
+    is_public = models.BooleanField(default=False)
     #add tags for topics section this will be a foreign key
     def __str__(self):
         return self.title

@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework import generics
 from .serializers import UserSerializer, NoteSerializer, CoursesSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note, Profile, Courses
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 # Create your views here.
 class CreateUserView(generics.CreateAPIView):
@@ -24,13 +25,17 @@ class NoteListCreate(generics.ListCreateAPIView):
         return Note.objects.filter(author=user) 
     #create a new note
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            #read only author so we add it here manually
-            note=serializer.save(author=self.request.user)
-            profile, created = Profile.objects.get_or_create(user=self.request.user)
-            profile.contributed_courses.add(note.course)
+        course_id = self.request.data.get('course')  # Get the course ID from the request data
+        if course_id:
+            try:
+                course = Courses.objects.get(id=course_id)  # Fetch the course object
+                note = serializer.save(author=self.request.user, course=course)  # Save the note with the course
+                profile, created = Profile.objects.get_or_create(user=self.request.user)
+                profile.contributed_courses.add(note.course)
+            except Courses.DoesNotExist:
+                raise ValidationError(f"Course with ID {course_id} does not exist.")
         else:
-            print(serializer.errors)
+            raise ValidationError("Course is required.")
 
 class NoteDelete(generics.DestroyAPIView):
     serializer_class = NoteSerializer
@@ -66,3 +71,25 @@ class CoursesDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Courses.objects.all()
     serializer_class = CoursesSerializer
     permission_classes = [IsAuthenticated]
+
+class CourseNotesList(generics.ListAPIView):
+    serializer_class = NoteSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        course_id = self.kwargs['course_id']
+        course = get_object_or_404(Courses, id=course_id)
+        user = self.request.user
+        if user.is_authenticated:
+            return Note.objects.filter(course=course)
+        else:
+            return Note.objects.filter(course=course, is_public=True)
+
+class UserContributedCoursesList(generics.ListAPIView):
+    serializer_class = CoursesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        profile, created = Profile.objects.get_or_create(user=user)
+        return profile.contributed_courses.all()
