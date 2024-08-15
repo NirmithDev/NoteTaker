@@ -8,7 +8,7 @@ class CoursesSerializer(serializers.ModelSerializer):
         fields = ['id', 'title']
 
 class ProfileSerializer(serializers.ModelSerializer):
-    contributed_course=CoursesSerializer(many=True, read_only=True)
+    contributed_courses=CoursesSerializer(many=True, read_only=True)
     class Meta:
         model = Profile
         fields = ['bio', 'location', 'birth_date', 'contributed_courses']
