@@ -41,13 +41,14 @@ const Home = () => {
 
   const createNote = (e) => {
     e.preventDefault();
-    api.post('/api/notes/', { content, title, course: selectedCourse })
-      .then(res => {
-        if (res.status === 201) alert('Note created successfully');
-        else alert('Failed to create note');
-        getNotes();
+    const course_id = selectedCourseId; // This should be set based on user input
+    api.post("/api/notes/", { content, title, course: course_id })
+      .then((res) => {
+          if (res.status === 201) alert("Note created successfully");
+          else alert("Failed to make note");
+          getNotes();
       })
-      .catch(error => alert(error));
+    .catch((error) => alert(error));
   };
 
   return (
